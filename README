@@ -1,0 +1,23 @@
+# **WebServer**
+
+用C++实现的高性能WEB服务器，主要参考了muduo网络库。
+
+## 特性
+
+- Reactor模式+非阻塞I/O
+- 使用线程池，one loop per thread
+- 同时支持ET模式、LT模式
+- 同步/异步写日志
+- 定时器定时提掉空闲连接
+
+## 测试结果
+
+利用webbench对服务器进行压力测试。线程池大小为5，模拟启10050个客户端，持续 60秒。 
+
+1. LT模式
+
+   ![](./picture/LT.png)
+
+2. ET模式
+
+   ![](./picture/LT.png)
