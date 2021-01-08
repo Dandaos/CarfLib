@@ -8,10 +8,12 @@
 #include<string.h>
 class Buffer{
     public:
-        const char CRLF[3]="\r\n";
+        char CRLF[3];
         Buffer(int size=1024):writeIndex_(0),
                         readIndex_(0),
-                        buffer_(size){}
+                        buffer_(size){
+            strcpy(CRLF,"\r\n");
+        }
         inline int readableBytes()const { return writeIndex_-readIndex_;}
         inline int writableBytes()const { return buffer_.size()-writeIndex_;}
         void append(const char*s,int len);
