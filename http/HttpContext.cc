@@ -48,6 +48,8 @@ bool HttpContext::parseRequest(Buffer* buf)
 {
   bool ok = true;
   bool hasMore = true;
+  std::string req(buf->beginRead(),buf->readableBytes());
+  std::cout<<req<<std::endl;
   while (hasMore)
   {
     if (parseState_ == kExpectRequestLine)
@@ -84,8 +86,9 @@ bool HttpContext::parseRequest(Buffer* buf)
         else
         {
           // empty line, end of header
-          parseState_ = kGotAll;
-          hasMore = false;
+          if(request_.method() == HttpRequest::POST) parseState_ = kExpectBody;
+          else parseState_=kGotAll;
+          //hasMore = false;
         }
         buf->retrieveLen(crlf + 2-buf->beginRead());
       }
@@ -97,7 +100,22 @@ bool HttpContext::parseRequest(Buffer* buf)
     else if (parseState_ == kExpectBody)
     {
       // FIXME:
+      int content_lenght=std::stoi(request_.getHeader("Content-Length"));
+      if(content_lenght==0) parseState_=kGotAll;
+      else if(!buf->empty()){
+        std::string body;
+        const char *crlf=buf->findCRLF();
+        if(crlf){
+          buf->retrieveLen(crlf+ 2 - buf->beginRead());
+        }
+        body.assign(buf->beginRead(),buf->readableBytes());
+        request_.appendBody(body);
+        buf->retrieveAll();
+        if(request_.bodyLength()==content_lenght) parseState_=kGotAll;
+      }
+      else hasMore=false;
     }
+    else hasMore=false;
   }
   return ok;
 }

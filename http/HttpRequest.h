@@ -139,7 +139,8 @@ class HttpRequest
             }
             headers_[field] = value;
         }
-
+        void appendBody(std::string &s){ body_+=s;}
+        int bodyLength() const{return body_.size();}
         std::string getHeader(const std::string& field) const
         {
             std::string result;
@@ -150,7 +151,7 @@ class HttpRequest
             }
             return result;
         }
-
+        const std::string& getBody()const{ return body_;}
         const std::map<std::string, std::string>& headers() const
         { return headers_; }
         void swap(HttpRequest& that)
@@ -160,11 +161,13 @@ class HttpRequest
             path_.swap(that.path_);
             query_.swap(that.query_);
             headers_.swap(that.headers_);
+            body_.swap(that.body_);
         }
     private:
         std::map<std::string,std::string>  headers_;
         std::string path_;
         std::string query_;
+        std::string body_;
         Method method_;
         Version version_;
 };

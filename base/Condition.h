@@ -12,6 +12,9 @@ class Condition{
             count=num;
             pthread_cond_init(&_cond,NULL);
         }
+        ~Condition(){
+            pthread_cond_destroy(&_cond);
+        }
         void wait(){
             //std::cout<<"test2:"<<count<<std::endl;
             while(count<=0){
