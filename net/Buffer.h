@@ -14,6 +14,7 @@ class Buffer{
                         buffer_(size){
             strcpy(CRLF,"\r\n");
         }
+        bool empty() const {return readIndex_==writeIndex_;}
         inline int readableBytes()const { return writeIndex_-readIndex_;}
         inline int writableBytes()const { return buffer_.size()-writeIndex_;}
         void append(const char*s,int len);
