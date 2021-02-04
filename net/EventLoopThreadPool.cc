@@ -32,9 +32,7 @@ void EventLoopThreadPool::start()
 {
     for(int i=0;i<num_;i++){
         threads_[i]->start();
-        mutex_.lock();
         while(loops_[i]==NULL) cond_.wait();
-        mutex_.unlock();
     }
 }      
 void EventLoopThreadPool::join()
@@ -46,10 +44,8 @@ void EventLoopThreadPool::join()
 void EventLoopThreadPool::threadFunc()
 {
     EventLoop loop;
-    mutex_.lock();
     loops_[index_++]=&loop;
     cond_.wakeUpOne();
-    mutex_.unlock();
     loop.loop();
 
 }

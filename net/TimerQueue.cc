@@ -23,10 +23,9 @@ void readTimerfd(int timerfd)
         LOG_ERROR("TimerQueue::handleRead() reads %d bytes instead of 8",n);
     }
 }
-struct timespec howMuchTimeFromNow(Timestamp when)
+struct timespec howMuchTimeFromNow(Timestamp &when)
 {
-    int64_t microseconds = when.microSecondsSinceEpoch()
-                            - Timestamp::now().microSecondsSinceEpoch();
+    int64_t microseconds = when.microSecondsSinceEpoch() - Timestamp::now().microSecondsSinceEpoch();
     if (microseconds < 100)
     {
         microseconds = 100;
@@ -36,7 +35,7 @@ struct timespec howMuchTimeFromNow(Timestamp when)
     ts.tv_nsec = static_cast<long>((microseconds % Timestamp::kMicroSecondsPerSecond) * 1000);
     return ts;
 }
-void resetTimerfd(int timerfd, Timestamp expiration)
+void resetTimerfd(int timerfd, Timestamp &expiration)
 {
     // wake up loop by timerfd_settime()
     struct itimerspec newValue;
@@ -47,53 +46,48 @@ void resetTimerfd(int timerfd, Timestamp expiration)
     int ret = timerfd_settime(timerfd, 0, &newValue, &oldValue);
     if (ret)
     {
-        LOG_ERROR("timerfd_settime()");
+        LOG_ERROR("timerfd_settime()!");
     }
 }
 bool operator<(const Entry&left,const Entry&right)
 {
     return (left.first<right.first);
 }
-TimerQueue::TimerQueue(EventLoop*loop):loop_(loop),
+TimerQueue::TimerQueue(EventLoop*loop,int check_per_seconds):loop_(loop),
                                         timers_(),
                                         timer_fd(createTimerfd()),
-                                        timerChannel(new Channel(loop,timer_fd))
+                                        timerChannel(new Channel(loop,timer_fd)),
+                                        check_per_seconds_(check_per_seconds)
 {
+    Timestamp when(Timestamp::now());
+    when.addTime(check_per_seconds_*1000*1000);
+    resetTimerfd(timer_fd,when);
     timerChannel->setHandleRead(std::bind(&TimerQueue::handleRead,this));
     timerChannel->enableReading();
 }
 TimerQueue::~TimerQueue()
 {
     close(timer_fd);
+    for(auto it=timers_.begin();it!=timers_.end();++it) delete it->second;
+    LOG_INFO("~TimerQueue()!");
 }
 void TimerQueue::handleRead()
 {
-    LOG_DEBUG("TimerQueue handleRead!");
     Timestamp now=Timestamp::now();
     readTimerfd(timer_fd);
     while(!timers_.empty())
     {
         auto it=timers_.begin();
-        Timestamp now(Timestamp::now());
         if(it->first<=now)
         {
-            it->second->run();
             Timer*timer=it->second;
-            if(timer->isVisited())
-            {
-                timer->restart();
-                timers_.erase(it);
-                addTimerInLoop(timer);
-            }
-            else
-            {
-                timers_.erase(it);
-                delete timer;
-            }
-            
+            timer->run(shared_from_this());
+            timers_.erase(it);      
         }
         else break;
     }
+    now.addTime(check_per_seconds_*1000*1000);
+    resetTimerfd(timer_fd,now);
 }
 void TimerQueue::addTimer(Timer*timer)
 {
@@ -104,7 +98,7 @@ void TimerQueue::addTimerInLoop(Timer*timer)
     Timestamp when(timer->expiration());
     std::pair<Timestamp,Timer*> entry(when,timer);
     timers_.insert(entry);
-    if(when==timers_.begin()->first) resetTimerfd(timer_fd,when);
+    //if(when==timers_.begin()->first) resetTimerfd(timer_fd,when);
 }
 void TimerQueue::deleteTimer(Timestamp&t)
 {

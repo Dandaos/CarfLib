@@ -126,10 +126,21 @@ void TcpConnection::shutdownWrite()
         state_=kshutdown;
     }
 }
-void TcpConnection::handleTimer()
+void TcpConnection::handleTimer(std::shared_ptr<TimerQueue> timerqueue)
 {
-    double remain=timer_->expiration().microSecondsSinceEpoch()-visited.microSecondsSinceEpoch();
-    if(remain<timer_->getInterval()) {timer_->setVisited(true);}
-    else shutdownWrite();
+    Timestamp now(Timestamp::now());
+    double remain=now.microSecondsSinceEpoch()-visited.microSecondsSinceEpoch();
+    //在interval时间内被再次访问
+    if(remain<timer_->getInterval()){
+        Timestamp t=visited;
+        t.addTime(timer_->getInterval());
+        timer_->restart(t);
+        timerqueue->addTimer(timer_);
+        LOG_INFO("TcpConnection[%d]'s timer restarts!",connID_);
+    }
+    else{
+        shutdownWrite();
+        LOG_INFO("Timer is expired!");
+    }
 }
                                                     

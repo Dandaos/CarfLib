@@ -1,16 +1,18 @@
-#ifndef TIMER_H
-#define TIMER_H
+#ifndef TIMER_QUEUE_H
+#define TIMER_QUEUE_H
 #include<functional>
 #include "base/Timestamp.h"
 #include<map>
 #include<vector>
 #include<queue>
+#include<memory>
 class EventLoop;
 class Channel;
+class TimerQueue;
 class Timer
 {
     public:
-        typedef std::function<void()> TimerCallback;
+        typedef std::function<void(std::shared_ptr<TimerQueue> timerqueue)> TimerCallback;
         Timer(Timestamp when,double interval):expired(when),
                                             visited(false),
                                             interval_(interval)
@@ -19,11 +21,11 @@ class Timer
         }
         inline bool isVisited() const{return visited;}
         inline Timestamp expiration()const{return expired;}
-        void run(){callback_();}
+        void run(std::shared_ptr<TimerQueue> timerqueue){callback_(timerqueue);}
         void setTimerFunc(TimerCallback cb){callback_=std::move(cb);}
-        void restart()
+        void restart(Timestamp expired_)
         {
-            expired.addTime(interval_);
+            expired=expired_;
         }
         void setVisited(bool visited_){visited=visited_;}
         double getInterval()const{return interval_;}
@@ -34,13 +36,12 @@ class Timer
         TimerCallback callback_;
 
 };
-typedef std::pair<Timestamp,Timer*> Entry;
-typedef std::priority_queue<Entry> TimerList;
 typedef std::map<Timestamp,Timer*> BackupList;
-class TimerQueue
+typedef std::pair<Timestamp,Timer*> Entry;
+class TimerQueue:public std::enable_shared_from_this<TimerQueue>
 {
     public:
-        TimerQueue(EventLoop*loop);
+        TimerQueue(EventLoop*loop,int check_per_seconds);
         ~TimerQueue();
         void addTimer(Timer*timer);
         void addTimerInLoop(Timer*timer);
@@ -52,6 +53,6 @@ class TimerQueue
         int timer_fd;
         Channel *timerChannel;
         BackupList timers_;
-
+        int check_per_seconds_;
 };
 #endif
