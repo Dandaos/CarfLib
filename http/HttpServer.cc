@@ -119,24 +119,38 @@ void HttpServer::defaultHttpCallback(const HttpRequest&req,HttpResponse*resp)
                 strcpy(file_name+len, "/root/logError.html");
         }
     }
-    if(strlen(file_name)==len){
-        resp->setStatusCode(HttpResponse::k404NotFound);
-        resp->setStatusMessage("Not Found");
-        resp->setCloseConnection(true);
+    else if(req.path()=="/5"){
+        strcpy(file_name+len,"/root/picture.html");
+    }
+    else if(req.path()=="/6"){
+        strcpy(file_name+len,"/root/video.html");
+    }
+    else if(req.path()=="/7"){
+        strcpy(file_name+len,"/root/fans.html");
     }
     else{
-        int file_fd=open(file_name,O_RDONLY);
+        strcat(file_name,"/root");
+        strcat(file_name,req.path().c_str());
+        //std::cout<<file_name<<std::endl;
+    }
+    int file_fd=open(file_name,O_RDONLY);
+    if(file_fd==-1){
+        resp->setStatusCode(HttpResponse::k404NotFound);
+        resp->setStatusMessage("404 NOT FOUND!");
+        resp->addHeader("Server","Carflib");
+    }
+    else{
         std::string body;
         char buf[1024];
         int n=0;
         while((n=read(file_fd,buf,1024))!=0){
-            body+=buf;
-            //std::cout<<buf<<std::endl;
+            body+=std::string(buf,n);
         }
+        //std::cout<<body.size()<<std::endl;
         resp->setStatusCode(HttpResponse::k200Ok);
         resp->setStatusMessage("OK");
-        resp->setContentType("text/html");
-        resp->addHeader("Server", "Muduo");
+        //resp->setContentType("text/html");
+        resp->addHeader("Server", "Carflib");
         resp->setBody(body);
         close(file_fd);
     }
