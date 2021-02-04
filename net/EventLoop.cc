@@ -21,7 +21,7 @@ EventLoop::EventLoop():_loop(false),
 }
 void EventLoop::loop(){
     assert(g_loop==this);
-    LOG_DEBUG("Loop begins!");
+    LOG_INFO("Loop begins!");
     _loop=true;
     while(!_quit){
         activeChannels.clear();

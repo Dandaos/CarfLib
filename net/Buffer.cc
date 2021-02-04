@@ -1,6 +1,6 @@
 #include "Buffer.h"
 void Buffer::append(const char*s,int len){
-    if(len>writableBytes()){resize();}
+    while(len>writableBytes()){resize();}
     std::copy(s,s+len,beginWrite());
     writeIndex_+=len;
 }

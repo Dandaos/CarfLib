@@ -2,14 +2,18 @@
 #include<assert.h>
 #include<iostream>
 #include "TimerQueue.h"
-TcpServer::TcpServer(EventLoop*loop,std::string ip,int port,int poolSize,int mode):mode_(mode),
-                                                                    ipName(ip),
-                                                                    pool(new EventLoopThreadPool(loop,poolSize)),
-                                                                    nextConnId_(0),
-                                                                    mutex_(),
-                                                                    conn_hold_seconds(0)
+TcpServer::TcpServer(EventLoop*loop,std::string ip,int port,int poolSize,
+            int mode,int timer_hold_seconds,int timer_check_per_seconds):mode_(mode),
+                                            ipName(ip),
+                                            pool(new EventLoopThreadPool(loop,poolSize)),
+                                            nextConnId_(0),
+                                            mutex_(),
+                                            conn_hold_seconds(timer_hold_seconds),
+                                        timer_check_per_seconds_(timer_check_per_seconds),
+                                        //timer_queue(new TimerQueue(loop,timer_check_per_seconds_)) 这样会出BUG
+                                        //因为timer_check_per_seconds_定义在后，此时还未初始化
+                                        timer_queue(new TimerQueue(loop,timer_check_per_seconds))
 {
-    timer_queue=(conn_hold_seconds>0)?new TimerQueue(loop):NULL;
     sockfd_=socket(AF_INET,SOCK_STREAM,0);
     setReusePort(sockfd_);
     setReuseAddr(sockfd_);
@@ -82,12 +86,12 @@ void TcpServer::newConnection()
         //一定要等TcpConnction构造成功才enableReading，否则很容易抛出std::weak_ptr错误
         //如果在此线程enableReading，可能会在loop对应Epoll处发生竞态
         if(conn_hold_seconds>0){
-            timer->setTimerFunc(std::bind(&TcpConnection::handleTimer,conn));
+            timer->setTimerFunc(std::bind(&TcpConnection::handleTimer,conn,_1));
             timer_queue->addTimer(timer);
         }
     }
     else{
-        LOG_INFO("Accept Error!");
+        LOG_ERROR("Accept Error!");
     }
 }
 void TcpServer::removeConnection(TcpConnectionPtr &conn)
@@ -110,5 +114,4 @@ TcpServer::~TcpServer()
 {
     assert(conn_.size()==0);
     delete pool;
-    if(timer_queue) delete timer_queue;
 }

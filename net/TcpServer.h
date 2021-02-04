@@ -11,7 +11,8 @@
 class TimerQueue;
 class TcpServer{
     public:
-        TcpServer(EventLoop*loop,std::string ip,int port,int pollSize,int mode);
+        TcpServer(EventLoop*loop,std::string ip,int port,int pollSize,
+        int mode,int timer_seconds,int timer_check_per_seconds);
         ~TcpServer();
         void start();
         void newConnection();
@@ -33,8 +34,9 @@ class TcpServer{
         std::map<int,TcpConnectionPtr> conn_;
         MessageCallback messageCallback;
         ConnectionCallback connectionCallback;
-        TimerQueue *timer_queue;
+        std::shared_ptr<TimerQueue> timer_queue;
         double conn_hold_seconds;
+        int timer_check_per_seconds_;
 
 };
 #endif

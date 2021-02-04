@@ -8,6 +8,7 @@
 #include <boost/any.hpp>
 #include "base/Timestamp.h"
 class TcpConnection;
+class TimerQueue;
 using std::placeholders::_1;
 using std::placeholders::_2;
 typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
@@ -44,7 +45,7 @@ class TcpConnection:public std::enable_shared_from_this<TcpConnection>
         boost::any* getMutableContext(){ return &context; }
         void setContext(const boost::any& context_){ context = context_; }
         void connectEstablished();
-        void handleTimer();
+        void handleTimer(std::shared_ptr<TimerQueue> timerqueue);
         Timer*getTimer() const{return timer_;}
     private:
         int connID_;

@@ -48,8 +48,8 @@ bool HttpContext::parseRequest(Buffer* buf)
 {
   bool ok = true;
   bool hasMore = true;
-  std::string req(buf->beginRead(),buf->readableBytes());
-  std::cout<<req<<std::endl;
+  //std::string req(buf->beginRead(),buf->readableBytes());
+  //std::cout<<req<<std::endl;
   while (hasMore)
   {
     if (parseState_ == kExpectRequestLine)

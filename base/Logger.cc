@@ -17,7 +17,7 @@ Logger::LOG_LEVEL initLogLevel();
 Logger::OutputFunc g_output=std::bind(&defaultOutput,_1,_2);
 Logger::LOG_LEVEL g_logLevel=initLogLevel();
 Logger::LOG_LEVEL initLogLevel(){
-    return Logger::LOG_NUM;
+    return Logger::INFO;
 }
 void defaultOutput(const char *str,int len){
     fwrite(str,1,len,stdout);
