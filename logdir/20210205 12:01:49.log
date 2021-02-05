@@ -1,0 +1,38 @@
+2021-02-05 12:01:50.005386 LOG_INFO(10497):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-05 12:01:50.005532 LOG_INFO(10498):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-05 12:01:50.006080 LOG_INFO(10499):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-05 12:01:50.006655 LOG_INFO(10500):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-05 12:01:50.006731 LOG_INFO(10501):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-05 12:01:50.006755 LOG_INFO(10494):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-05 12:01:55.386811 LOG_INFO(10494):Receive new connection[0] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:70
+2021-02-05 12:01:55.388715 LOG_INFO(10497):POST /5 HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:01:55.388765 LOG_INFO(10497):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:01:55.404968 LOG_INFO(10497):GET /xxx.jpg HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:01:55.405009 LOG_INFO(10497):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:01:57.975957 LOG_INFO(10497):POST /6 HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:01:57.976005 LOG_INFO(10497):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:01:58.014141 LOG_INFO(10497):GET /xxx.mp4 HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:01:58.014180 LOG_INFO(10497):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:02:00.502401 LOG_INFO(10494):Remove connection[0] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:111
+2021-02-05 12:02:01.937031 LOG_INFO(10494):Receive new connection[1] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:70
+2021-02-05 12:02:01.937918 LOG_INFO(10498):POST /7 HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:02:01.937961 LOG_INFO(10498):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:02:01.958781 LOG_INFO(10498):GET /test1.jpg HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:02:01.958837 LOG_INFO(10498):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:02:07.430219 LOG_INFO(10498):POST /1 HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:02:07.430265 LOG_INFO(10498):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:02:08.000226 LOG_INFO(10494):TcpConnection[1]'s timer restarts!-/home/luyuda/WebServer/net/TcpConnection.cc:140
+2021-02-05 12:02:08.242716 LOG_INFO(10498):POST /2CGISQL.cgi HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:02:08.242763 LOG_INFO(10498):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:02:09.273140 LOG_INFO(10498):POST /5 HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:02:09.273182 LOG_INFO(10498):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:02:09.293057 LOG_INFO(10498):GET /xxx.jpg HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:02:09.293105 LOG_INFO(10498):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:02:14.000543 LOG_INFO(10494):TcpConnection[1]'s timer restarts!-/home/luyuda/WebServer/net/TcpConnection.cc:140
+2021-02-05 12:02:16.000765 LOG_INFO(10494):Timer is expired, shutdownWrite!-/home/luyuda/WebServer/net/TcpConnection.cc:144
+2021-02-05 12:02:16.001140 LOG_INFO(10494):Remove connection[1] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:111
+2021-02-05 12:02:39.248117 LOG_INFO(10494):Receive new connection[2] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:70
+2021-02-05 12:02:39.248984 LOG_INFO(10499):GET /33 HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:02:39.249038 LOG_INFO(10499):404 Not Found!-/home/luyuda/WebServer/http/HttpServer.cc:139
+2021-02-05 12:02:46.002095 LOG_INFO(10494):Timer is expired, shutdownWrite!-/home/luyuda/WebServer/net/TcpConnection.cc:144
+2021-02-05 12:02:46.002210 LOG_INFO(10494):Remove connection[2] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:111

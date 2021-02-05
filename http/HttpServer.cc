@@ -62,6 +62,7 @@ std::string DBName, int Port, int MaxConn, int close_log){
 }
 void HttpServer::defaultHttpCallback(const HttpRequest&req,HttpResponse*resp)
 {
+    LOG_INFO("%s %s HTTP/1.%d",req.methodString().c_str(),req.path().c_str(),req.getVersion()-1);
     char file_name[200];
     getcwd(file_name,200);
     int len=strlen(file_name);
@@ -135,11 +136,13 @@ void HttpServer::defaultHttpCallback(const HttpRequest&req,HttpResponse*resp)
     }
     int file_fd=open(file_name,O_RDONLY);
     if(file_fd==-1){
+        LOG_INFO("404 Not Found!");
         resp->setStatusCode(HttpResponse::k404NotFound);
         resp->setStatusMessage("404 NOT FOUND!");
         resp->addHeader("Server","Carflib");
     }
     else{
+        LOG_INFO("200 OK!");
         std::string body;
         char buf[1024];
         int n=0;

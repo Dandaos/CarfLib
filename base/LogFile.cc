@@ -1,13 +1,15 @@
 #include "LogFile.h"
 #include<unistd.h>
 #include<iostream>
+#include<string.h>
+#include "Logger.h"
 BlockQueue<std::string> g_bqueue(BLCOCK_QUEUE_SIZE);
 
-LogFile::LogFile(std::string &log_dir,bool asylog, off_t rollSize,int checkEveryN)
+LogFile::LogFile(std::string log_dir,bool asylog, off_t rollSize,int checkEveryN)
                                     :rollSize_(rollSize),
                                     asylog_(asylog),
                                     checkEveryN_(checkEveryN),
-                                    writenByes(0),
+                                    writenBytes(0),
                                     file_(NULL),
                                     count_(0),
                                     thread_(std::bind(&LogFile::asyWrite,this)),
@@ -17,6 +19,7 @@ LogFile::LogFile(std::string &log_dir,bool asylog, off_t rollSize,int checkEvery
     if(log_dir.empty()){
         char path[128];
         getcwd(path,sizeof path);
+        strcat(path,"/logdir");
         basename=std::string(path);
     }
     else{
@@ -36,8 +39,8 @@ void LogFile::append_file(const char*str,int len)
         count_++;
         size_t n=fwrite(str,1,len,file_);
         assert(n==len);
-        writenByes+=n;
-        if(writenByes>=rollSize_) rollFile();
+        writenBytes+=n;
+        if(writenBytes>=rollSize_) rollFile();
         else if(count_>=checkEveryN_){
             time_t now=time(NULL);
             time_t day=now/kRollPerSeconds_;
@@ -53,8 +56,8 @@ void LogFile::asyWrite(){
         std::string s=g_bqueue.pop_front();
         size_t n=fwrite(s.c_str(),1,s.size(),file_);
         assert(n==s.size());
-        writenByes+=n;
-        if(writenByes>=rollSize_){
+        writenBytes+=n;
+        if(writenBytes>=rollSize_){
             rollFile();
         }
         else if(count_>=checkEveryN_){
@@ -64,6 +67,7 @@ void LogFile::asyWrite(){
                 rollFile();
             }
         }
+        fflush(file_);
     }
 }
 std::string LogFile::getCurrentName(time_t *now)
@@ -80,12 +84,14 @@ void LogFile::rollFile()
     if(file_) fclose(file_);
     time_t now=0;
     std::string file_suffix=getCurrentName(&now);
-    lastFlush=lastRoll=now;
     currentDay=now/kRollPerSeconds_;
     count_=0;
-    writenByes=0;
-    std::string filename=basename+file_suffix;
-    file_=fopen(filename.c_str(),"a+");
+    writenBytes=0;
+    std::string filename=basename+"/"+file_suffix;
+    if((file_=fopen(filename.c_str(),"a+"))==NULL){
+        LOG_ERROR("Can not open file %s",filename.c_str());
+        exit(0);
+    }
 }
 void LogFile::setOver(bool flag){
     over=flag;
