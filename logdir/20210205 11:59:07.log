@@ -1,0 +1,34 @@
+2021-02-05 11:59:07.881939 LOG_INFO(10370):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-05 11:59:07.882082 LOG_INFO(10371):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-05 11:59:07.882182 LOG_INFO(10372):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-05 11:59:07.882270 LOG_INFO(10373):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-05 11:59:07.882721 LOG_INFO(10374):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-05 11:59:07.882741 LOG_INFO(10367):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-05 11:59:20.353848 LOG_INFO(10367):Receive new connection[0] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:70
+2021-02-05 11:59:20.354057 LOG_INFO(10370):POST /6 HTTP/1.2-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 11:59:20.354093 LOG_INFO(10370):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 11:59:20.394381 LOG_INFO(10370):GET /xxx.mp4 HTTP/1.2-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 11:59:20.394440 LOG_INFO(10370):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 11:59:25.876330 LOG_INFO(10367):Timer is expired, shutdownWrite!-/home/luyuda/WebServer/net/TcpConnection.cc:144
+2021-02-05 11:59:25.876376 LOG_ERROR(10370):TcpConnection::handleWrite Error!-/home/luyuda/WebServer/net/TcpConnection.cc:69
+2021-02-05 11:59:51.383472 LOG_INFO(10367):Remove connection[0] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:111
+2021-02-05 12:00:10.260795 LOG_INFO(10367):Receive new connection[1] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:70
+2021-02-05 12:00:10.261178 LOG_INFO(10371):POST /0 HTTP/1.2-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:00:10.261210 LOG_INFO(10371):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:00:15.879079 LOG_INFO(10367):Timer is expired, shutdownWrite!-/home/luyuda/WebServer/net/TcpConnection.cc:144
+2021-02-05 12:00:15.879788 LOG_INFO(10367):Remove connection[1] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:111
+2021-02-05 12:00:20.290067 LOG_INFO(10367):Receive new connection[2] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:70
+2021-02-05 12:00:20.290284 LOG_INFO(10372):POST /3CGISQL.cgi HTTP/1.2-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:00:20.376069 LOG_INFO(10372):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:00:25.879459 LOG_INFO(10367):Timer is expired, shutdownWrite!-/home/luyuda/WebServer/net/TcpConnection.cc:144
+2021-02-05 12:00:25.880601 LOG_INFO(10367):Remove connection[2] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:111
+2021-02-05 12:00:28.644523 LOG_INFO(10367):Receive new connection[3] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:70
+2021-02-05 12:00:28.644679 LOG_INFO(10373):POST /2CGISQL.cgi HTTP/1.2-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:00:28.644712 LOG_INFO(10373):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:00:31.134028 LOG_INFO(10373):POST /5 HTTP/1.2-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:00:31.134066 LOG_INFO(10373):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:00:31.155150 LOG_INFO(10373):GET /xxx.jpg HTTP/1.2-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-05 12:00:31.155204 LOG_INFO(10373):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-05 12:00:33.879724 LOG_INFO(10367):TcpConnection[3]'s timer restarts!-/home/luyuda/WebServer/net/TcpConnection.cc:140
+2021-02-05 12:00:37.879765 LOG_INFO(10367):Timer is expired, shutdownWrite!-/home/luyuda/WebServer/net/TcpConnection.cc:144
+2021-02-05 12:00:37.879915 LOG_INFO(10367):Remove connection[3] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:111

@@ -67,7 +67,7 @@ void TcpServer::newConnection()
     setCloseOnExec(clt_fd);
     if(clt_fd>=0){
         std::string ipPort=ipPortToString(&addr);
-        LOG_INFO("Receive new connection from %s",ipPort.c_str());
+        LOG_INFO("Receive new connection[%d] from %s",nextConnId_,ipPort.c_str());
         EventLoop *loop=pool->getNextLoop();
         assert(loop!=NULL);
         Timer*timer=NULL;
@@ -108,7 +108,7 @@ void TcpServer::removeConnectionInLoop(TcpConnectionPtr&conn)
         timer_queue->deleteTimer(t);
     }
     conn_.erase(connID);
-    LOG_INFO("Remove connection from %s",name.c_str());
+    LOG_INFO("Remove connection[%d] from %s",connID,name.c_str());
 }
 TcpServer::~TcpServer()
 {

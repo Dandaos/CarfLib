@@ -67,6 +67,7 @@ void TcpConnection::handleWrite()
         }
         else{
             LOG_ERROR("TcpConnection::handleWrite Error!");
+            channel_->disableWriting();
         }
     }
     else{
@@ -140,7 +141,7 @@ void TcpConnection::handleTimer(std::shared_ptr<TimerQueue> timerqueue)
     }
     else{
         shutdownWrite();
-        LOG_INFO("Timer is expired!");
+        LOG_INFO("Timer is expired, shutdownWrite!");
     }
 }
                                                     
