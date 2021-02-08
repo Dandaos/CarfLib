@@ -13,6 +13,7 @@ class Thread{
         bool _detached;
         Mutex mutex;
         Condition _cond;
+        int cond_num;
         pthread_t _threadID;
         int _tid;
         Func _func;
@@ -27,9 +28,10 @@ class Thread{
 };
 struct ThreadData{
     typedef Thread::Func Func;
-    ThreadData(Func func,Condition *cond,int *tid);
+    ThreadData(Func func,Condition *cond,int *cond_num,int *tid);
     void run();
     Condition *_cond;
+    int *cond_num_;
     Func _func;
     int *_tid;
 };

@@ -7,25 +7,33 @@ template<class T>
 class BlockQueue{
     public:
         BlockQueue(int maxSize):mutex(),
-                                maxSize_(maxSize),
-                                waitForEmpty(0,mutex),
-                                waitForFull(maxSize,mutex)
+                                used(0),
+                                capacity(maxSize),
+                                waitForEmpty(mutex),
+                                waitForFull(mutex)
         {
+
         }
         ~BlockQueue()=default;
         void push_back(T&item){
             MutexRAII guard(mutex);
-            waitForFull.wait();
+            while(used==capacity){      //队列满时等待
+                waitForEmpty.wait();
+            }
             queue_.push_back(item);
-            waitForEmpty.wakeUpOne();
+            ++used;
+            waitForFull.wakeUpOne();
         }
         
         T pop_front(){
             MutexRAII guard(mutex);
-            waitForEmpty.wait();
+            while(used==0){    //队列空时等待
+                waitForFull.wait();
+            }
             T t=queue_.front();
             queue_.pop_front();
-            waitForFull.wakeUpOne();
+            --used;
+            waitForEmpty.wakeUpOne();
             return t;
         }
     private:
@@ -33,7 +41,8 @@ class BlockQueue{
         Condition waitForEmpty;
         Condition waitForFull;
         Mutex mutex;
-        int maxSize_;
+        int used;
+        int capacity; 
 };
 
 

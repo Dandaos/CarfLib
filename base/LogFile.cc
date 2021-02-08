@@ -32,6 +32,7 @@ void LogFile::append_file(const char*str,int len)
 {   
     if(asylog_){    //放入阻塞队列
         std::string s(str,len);
+        //std::cout<<s<<std::endl;
         g_bqueue.push_back(s);
     }
     else{   //不是异步，直接输出
@@ -54,6 +55,7 @@ void LogFile::append_file(const char*str,int len)
 void LogFile::asyWrite(){
     while(!over){
         std::string s=g_bqueue.pop_front();
+        std::cout<<s<<std::endl;
         size_t n=fwrite(s.c_str(),1,s.size(),file_);
         assert(n==s.size());
         writenBytes+=n;
