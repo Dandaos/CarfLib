@@ -11,10 +11,11 @@ Thread::Thread(Func func,bool detach):_func(std::move(func)),
                             _started(false),
                             _joined(false),
                             mutex(),
-                            _cond(0,mutex),
+                            _cond(mutex),
+                            cond_num(0),
                             _threadID(0),
                             _tid(0),
-                            data(new ThreadData(_func,&_cond,&_tid))
+                            data(new ThreadData(_func,&_cond,&cond_num,&_tid))
 {
 
 }
@@ -33,7 +34,7 @@ void Thread::start(){
     pthread_create(&_threadID,NULL,Thread::startThread,data);
     if(_detached) pthread_detach(_threadID);
     MutexRAII guard(mutex);
-    _cond.wait();    //等待创建的线程运行
+    while(cond_num==0) _cond.wait();    //等待创建的线程运行
 }
 void Thread::join(){
     assert(_started);
@@ -47,15 +48,17 @@ void* Thread::startThread(void *arg)
     ThreadData *data=static_cast<ThreadData*>(arg);
     data->run();
 }
-ThreadData::ThreadData(Func func,Condition *cond,int *tid):_func(std::move(func)),
+ThreadData::ThreadData(Func func,Condition *cond,int *cond_num,int *tid):_func(std::move(func)),
                                                 _cond(cond),
+                                                cond_num_(cond_num),
                                                 _tid(tid)
 {
 
 }
 void ThreadData::run()
 {
-    _cond->wakeUpAll();
+    ++(*cond_num_);
+    _cond->wakeUpOne();
     *_tid=Thread::gettid();
     _func();            //此处异常日后处理
     LOG_DEBUG("Thread Exit!");

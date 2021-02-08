@@ -10,7 +10,7 @@
 
 using namespace std;
 
-connection_pool::connection_pool():lock1(),lock2(),reserve(nullptr)
+connection_pool::connection_pool():_mutex(),reserve(nullptr)
 {
 	m_CurConn = 0;
 	m_FreeConn = 0;
@@ -23,7 +23,8 @@ connection_pool *connection_pool::GetInstance()
 }
 
 //构造初始化
-void connection_pool::init(string url, string User, string PassWord, string DBName, int Port, int MaxConn, int close_log)
+void connection_pool::init(string url, string User, string PassWord, 
+		string DBName, int Port, int MaxConn, int close_log)
 {
 	m_url = url;
 	m_Port = Port;
@@ -42,7 +43,8 @@ void connection_pool::init(string url, string User, string PassWord, string DBNa
 			LOG_ERROR("MySQL Error");
 			exit(1);
 		}
-		con = mysql_real_connect(con, url.c_str(), User.c_str(), PassWord.c_str(), DBName.c_str(), Port, NULL, 0);
+		con = mysql_real_connect(con, url.c_str(), User.c_str(), PassWord.c_str(), 
+					DBName.c_str(), Port, NULL, 0);
 
 		if (con == NULL)
 		{
@@ -53,7 +55,7 @@ void connection_pool::init(string url, string User, string PassWord, string DBNa
 		++m_FreeConn;
 	}
 
-	reserve = new Condition(m_FreeConn,lock1);
+	reserve = new Condition(_mutex);
 
 	m_MaxConn = m_FreeConn;
 }
@@ -67,17 +69,15 @@ MYSQL *connection_pool::GetConnection()
 	if (0 == connList.size())
 		return NULL;
 
-	reserve->wait();
-	
-	lock2.lock();
+	_mutex.lock();
 
+	while(m_FreeConn==0) reserve->wait();
 	con = connList.front();
 	connList.pop_front();
-
 	--m_FreeConn;
 	++m_CurConn;
 
-	lock2.unlock();
+	_mutex.unlock();
 	return con;
 }
 
@@ -87,13 +87,13 @@ bool connection_pool::ReleaseConnection(MYSQL *con)
 	if (NULL == con)
 		return false;
 
-	lock2.lock();
+	_mutex.lock();
 
 	connList.push_back(con);
 	++m_FreeConn;
 	--m_CurConn;
 
-	lock2.unlock();
+	_mutex.unlock();
 
 	reserve->wakeUpOne();
 	return true;
@@ -103,7 +103,7 @@ bool connection_pool::ReleaseConnection(MYSQL *con)
 void connection_pool::DestroyPool()
 {
 
-	lock2.lock();
+	_mutex.lock();
 	if (connList.size() > 0)
 	{
 		list<MYSQL *>::iterator it;
@@ -116,8 +116,7 @@ void connection_pool::DestroyPool()
 		m_FreeConn = 0;
 		connList.clear();
 	}
-
-	lock2.unlock();
+	_mutex.unlock();
 }
 
 //当前空闲的连接数

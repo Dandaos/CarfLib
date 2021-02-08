@@ -1,0 +1,36 @@
+2021-02-08 16:44:51.892528 LOG_INFO( 5754):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-08 16:44:51.892613 LOG_INFO( 5755):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-08 16:44:51.893164 LOG_INFO( 5756):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-08 16:44:51.893259 LOG_INFO( 5757):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-08 16:44:51.893330 LOG_INFO( 5758):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-08 16:44:51.893353 LOG_INFO( 5752):Loop begins!-/home/luyuda/WebServer/net/EventLoop.cc:24
+2021-02-08 16:44:59.156314 LOG_INFO( 5752):Receive new connection[0] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:70
+2021-02-08 16:44:59.158478 LOG_INFO( 5754):GET / HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-08 16:44:59.158548 LOG_INFO( 5754):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-08 16:45:00.806435 LOG_INFO( 5754):POST /0 HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-08 16:45:00.806504 LOG_INFO( 5754):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-08 16:45:01.679680 LOG_INFO( 5754):POST /3CGISQL.cgi HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-08 16:45:01.679725 LOG_INFO( 5754):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-08 16:45:04.372658 LOG_INFO( 5754):POST /1 HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-08 16:45:04.372732 LOG_INFO( 5754):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-08 16:45:05.685177 LOG_INFO( 5754):POST /2CGISQL.cgi HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-08 16:45:05.685216 LOG_INFO( 5754):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-08 16:45:05.887036 LOG_INFO( 5752):TcpConnection[0]'s timer restarts!-/home/luyuda/WebServer/net/TcpConnection.cc:140
+2021-02-08 16:45:06.472399 LOG_INFO( 5754):POST /5 HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-08 16:45:06.472442 LOG_INFO( 5754):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-08 16:45:06.492490 LOG_INFO( 5754):GET /xxx.jpg HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-08 16:45:06.492535 LOG_INFO( 5754):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-08 16:45:08.802628 LOG_INFO( 5754):POST /6 HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-08 16:45:08.802683 LOG_INFO( 5754):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-08 16:45:08.857332 LOG_INFO( 5754):GET /xxx.mp4 HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-08 16:45:08.857370 LOG_INFO( 5754):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-08 16:45:11.887173 LOG_INFO( 5752):TcpConnection[0]'s timer restarts!-/home/luyuda/WebServer/net/TcpConnection.cc:140
+2021-02-08 16:45:13.887251 LOG_INFO( 5752):Timer is expired, shutdownWrite!-/home/luyuda/WebServer/net/TcpConnection.cc:144
+2021-02-08 16:45:13.888326 LOG_INFO( 5752):Remove connection[0] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:111
+2021-02-08 16:45:19.568005 LOG_INFO( 5752):Receive new connection[1] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:70
+2021-02-08 16:45:19.568172 LOG_INFO( 5755):POST /7 HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-08 16:45:19.568207 LOG_INFO( 5755):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-08 16:45:19.594485 LOG_INFO( 5755):GET /test1.jpg HTTP/1.1-/home/luyuda/WebServer/http/HttpServer.cc:65
+2021-02-08 16:45:19.594527 LOG_INFO( 5755):200 OK!-/home/luyuda/WebServer/http/HttpServer.cc:145
+2021-02-08 16:45:25.887580 LOG_INFO( 5752):Timer is expired, shutdownWrite!-/home/luyuda/WebServer/net/TcpConnection.cc:144
+2021-02-08 16:45:25.887764 LOG_INFO( 5752):Remove connection[1] from 0.0.0.0:0-/home/luyuda/WebServer/net/TcpServer.cc:111
