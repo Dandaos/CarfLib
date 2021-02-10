@@ -25,7 +25,8 @@ class TcpConnection:public std::enable_shared_from_this<TcpConnection>
             kconnected,
             kshutdown
         };
-        TcpConnection(EventLoop*loop,int fd,int mode,std::string &peername,int connID,Timer*timer);
+        TcpConnection(EventLoop*loop,int fd,int mode,std::string &peername,
+                int connID,std::shared_ptr<Timer> timer);
         ~TcpConnection();
         void handleRead();
         void handleClose();
@@ -46,7 +47,8 @@ class TcpConnection:public std::enable_shared_from_this<TcpConnection>
         void setContext(const boost::any& context_){ context = context_; }
         void connectEstablished();
         void handleTimer(std::shared_ptr<TimerQueue> timerqueue);
-        Timer*getTimer() const{return timer_;}
+        std::shared_ptr<Timer> getTimer() const{return timer_;}
+        void stopTimer();
     private:
         int connID_;
         int fd_;
@@ -60,7 +62,7 @@ class TcpConnection:public std::enable_shared_from_this<TcpConnection>
         boost::any context;
         Timestamp visited;
         State state_;
-        Timer *timer_;
+        std::shared_ptr<Timer> timer_;
         
 };
 #endif

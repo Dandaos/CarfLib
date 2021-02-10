@@ -12,7 +12,8 @@ TcpServer::TcpServer(EventLoop*loop,std::string ip,int port,int poolSize,
                                         timer_check_per_seconds_(timer_check_per_seconds),
                                         //timer_queue(new TimerQueue(loop,timer_check_per_seconds_)) 这样会出BUG
                                         //因为timer_check_per_seconds_定义在后，此时还未初始化
-                                        timer_queue(new TimerQueue(loop,timer_check_per_seconds))
+                                        timer_queue(new TimerQueue(loop,timer_check_per_seconds)),
+                                        idlefd(open("/dev/null",O_RDONLY |O_CLOEXEC))
 {
     sockfd_=socket(AF_INET,SOCK_STREAM,0);
     setReusePort(sockfd_);
@@ -63,18 +64,18 @@ void TcpServer::newConnection()
     memset(&addr,0,sizeof addr);
     socklen_t len=0;
     int clt_fd=accept(sockfd_,(struct sockaddr*)&addr,&len);
-    setNonBlock(clt_fd);
-    setCloseOnExec(clt_fd);
     if(clt_fd>=0){
+        setNonBlock(clt_fd);
+        setCloseOnExec(clt_fd);
         std::string ipPort=ipPortToString(&addr);
         LOG_INFO("Receive new connection[%d] from %s",nextConnId_,ipPort.c_str());
         EventLoop *loop=pool->getNextLoop();
         assert(loop!=NULL);
-        Timer*timer=NULL;
+        std::shared_ptr<Timer> timer;
         if(conn_hold_seconds>0){
             Timestamp when(Timestamp::now());
             when.addTime(conn_hold_seconds*1000*1000);
-            timer=new Timer(when,conn_hold_seconds*1000*1000);
+            timer.reset(new Timer(when,conn_hold_seconds*1000*1000));
         }
         TcpConnectionPtr conn(new TcpConnection(loop,clt_fd,mode_,ipPort,nextConnId_,timer));
         conn_[nextConnId_]=conn;
@@ -91,7 +92,17 @@ void TcpServer::newConnection()
         }
     }
     else{
-        LOG_ERROR("Accept Error!");
+        if(errno=EMFILE){
+            LOG_ERROR("descriptors have been run out!");
+            close(idlefd);
+            idlefd=accept(sockfd_,NULL,NULL);
+            close(idlefd);
+            idlefd=open("/dev/null",O_RDONLY |O_CLOEXEC);
+        }
+        else{
+            LOG_ERROR("Accept Error!");
+            exit(0);
+        }
     }
 }
 void TcpServer::removeConnection(TcpConnectionPtr &conn)
@@ -107,8 +118,9 @@ void TcpServer::removeConnectionInLoop(TcpConnectionPtr&conn)
         Timestamp t=conn->getTimer()->expiration();
         timer_queue->deleteTimer(t);
     }
+    conn->stopTimer();
     conn_.erase(connID);
-    LOG_INFO("Remove connection[%d] from %s",connID,name.c_str());
+    //LOG_INFO("Remove connection[%d] from %s",connID,name.c_str());
 }
 TcpServer::~TcpServer()
 {

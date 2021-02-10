@@ -7,7 +7,7 @@
 const int initBufSize=1024;
 void defaultMessageCallback(TcpConnectionPtr conn,Buffer*buf){}
 MessageCallback defaultCallback=std::bind(&defaultMessageCallback,_1,_2);
-TcpConnection::TcpConnection(EventLoop*loop,int fd,int mode,std::string &peername,int connID,Timer*timer):channel_(new Channel(loop,fd)),
+TcpConnection::TcpConnection(EventLoop*loop,int fd,int mode,std::string &peername,int connID,std::shared_ptr<Timer> timer):channel_(new Channel(loop,fd)),
                                                     writeBuffer(initBufSize),
                                                     readBuffer(initBufSize),
                                                     readCallback_(defaultCallback),
@@ -26,6 +26,7 @@ TcpConnection::TcpConnection(EventLoop*loop,int fd,int mode,std::string &peernam
 TcpConnection::~TcpConnection()
 {
     // 2020/10/16：修改前为close(channel_->getFd()),但此时channel_已经被析构了,程序会突然退出
+    LOG_INFO("TcpConnection[%d] destroyed!",fd_);
     close(fd_);
 }
 void TcpConnection::handleRead()
@@ -89,7 +90,13 @@ void TcpConnection::handleClose()
     channel_->disableAll();
     TcpConnectionPtr guardThis(shared_from_this());
     closeCallback_(guardThis);      //回调將TcpServer中的TcpConnection异步删除
-    loop->queueInLoop(std::bind(&TcpConnection::connDestroyed,shared_from_this()));
+    //loop->queueInLoop(std::bind(&TcpConnection::connDestroyed,guardThis));
+    state_=kdisconnected;
+    delete channel_;
+}
+void TcpConnection::stopTimer()
+{
+    timer_=std::shared_ptr<Timer>();
 }
 void TcpConnection::connDestroyed()
 {
@@ -132,16 +139,18 @@ void TcpConnection::handleTimer(std::shared_ptr<TimerQueue> timerqueue)
     Timestamp now(Timestamp::now());
     double remain=now.microSecondsSinceEpoch()-visited.microSecondsSinceEpoch();
     //在interval时间内被再次访问
-    if(remain<timer_->getInterval()){
-        Timestamp t=visited;
-        t.addTime(timer_->getInterval());
-        timer_->restart(t);
-        timerqueue->addTimer(timer_);
-        LOG_INFO("TcpConnection[%d]'s timer restarts!",connID_);
-    }
-    else{
-        shutdownWrite();
-        LOG_INFO("Timer is expired, shutdownWrite!");
+    if(timer_.use_count()>0){
+        if(remain<timer_->getInterval()){
+            Timestamp t=visited;
+            t.addTime(timer_->getInterval());
+            timer_->restart(t);
+            timerqueue->addTimer(timer_);
+            LOG_INFO("TcpConnection[%d]'s timer restarts!",connID_);
+        }
+        else{
+            shutdownWrite();
+            LOG_INFO("Timer is expired, shutdownWrite!");
+        }
     }
 }
                                                     

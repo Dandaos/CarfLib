@@ -136,17 +136,17 @@ void HttpServer::defaultHttpCallback(const HttpRequest&req,HttpResponse*resp)
     }
     int file_fd=open(file_name,O_RDONLY);
     if(file_fd==-1){
-        LOG_INFO("404 Not Found!");
-        resp->setStatusCode(HttpResponse::k404NotFound);
-        resp->setStatusMessage("404 NOT FOUND!");
+        //LOG_ERROR("open file[%s] error[%s]!",file_name,strerror(errno));
+        resp->setStatusCode(HttpResponse::k200Ok);
+        resp->setStatusMessage("ok");
         resp->addHeader("Server","Carflib");
     }
     else{
         LOG_INFO("200 OK!");
         std::string body;
-        char buf[1024];
+        char buf[2048];
         int n=0;
-        while((n=read(file_fd,buf,1024))!=0){
+        while((n=read(file_fd,buf,2048))!=0){
             body+=std::string(buf,n);
         }
         //std::cout<<body.size()<<std::endl;
