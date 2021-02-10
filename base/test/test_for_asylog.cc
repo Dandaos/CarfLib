@@ -1,5 +1,6 @@
-#include "../LogFile.h"
-#include "../Logger.h"
+#include "./base/LogFile.h"
+#include "./base/Logger.h"
+#include "./base/Timestamp.h"
 #include<vector>
 #include<iostream>
 LogFile* log_file=NULL;

@@ -37,6 +37,7 @@ class TcpServer{
         std::shared_ptr<TimerQueue> timer_queue;
         double conn_hold_seconds;
         int timer_check_per_seconds_;
+        int idlefd;
 
 };
 #endif

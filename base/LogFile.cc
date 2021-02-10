@@ -55,7 +55,7 @@ void LogFile::append_file(const char*str,int len)
 void LogFile::asyWrite(){
     while(!over){
         std::string s=g_bqueue.pop_front();
-        std::cout<<s<<std::endl;
+        //std::cout<<s<<std::endl;
         size_t n=fwrite(s.c_str(),1,s.size(),file_);
         assert(n==s.size());
         writenBytes+=n;

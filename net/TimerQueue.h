@@ -6,6 +6,7 @@
 #include<vector>
 #include<queue>
 #include<memory>
+#include "./base/Logger.h"
 class EventLoop;
 class Channel;
 class TimerQueue;
@@ -18,6 +19,9 @@ class Timer
                                             interval_(interval)
         {
 
+        }
+        ~Timer(){
+            //LOG_INFO("Timer destroyed!");
         }
         inline bool isVisited() const{return visited;}
         inline Timestamp expiration()const{return expired;}
@@ -36,16 +40,15 @@ class Timer
         TimerCallback callback_;
 
 };
-typedef std::map<Timestamp,Timer*> BackupList;
-typedef std::pair<Timestamp,Timer*> Entry;
+typedef std::map<Timestamp,std::shared_ptr<Timer>> BackupList;
+typedef std::pair<Timestamp,std::shared_ptr<Timer>> Entry;
 class TimerQueue:public std::enable_shared_from_this<TimerQueue>
 {
     public:
         TimerQueue(EventLoop*loop,int check_per_seconds);
         ~TimerQueue();
-        void addTimer(Timer*timer);
-        void addTimerInLoop(Timer*timer);
-        std::vector<Timer*> getExpired();
+        void addTimer(std::shared_ptr<Timer> timer);
+        void addTimerInLoop(std::shared_ptr<Timer> timer);
         void handleRead();
         void deleteTimer(Timestamp &t);
     private:

@@ -68,8 +68,6 @@ TimerQueue::TimerQueue(EventLoop*loop,int check_per_seconds):loop_(loop),
 TimerQueue::~TimerQueue()
 {
     close(timer_fd);
-    for(auto it=timers_.begin();it!=timers_.end();++it) delete it->second;
-    LOG_INFO("~TimerQueue()!");
 }
 void TimerQueue::handleRead()
 {
@@ -80,7 +78,7 @@ void TimerQueue::handleRead()
         auto it=timers_.begin();
         if(it->first<=now)
         {
-            Timer*timer=it->second;
+            std::shared_ptr<Timer> timer=it->second;
             timer->run(shared_from_this());
             timers_.erase(it);      
         }
@@ -89,23 +87,20 @@ void TimerQueue::handleRead()
     now.addTime(check_per_seconds_*1000*1000);
     resetTimerfd(timer_fd,now);
 }
-void TimerQueue::addTimer(Timer*timer)
+void TimerQueue::addTimer(std::shared_ptr<Timer> timer)
 {
-    loop_->queueInLoop(std::bind(&TimerQueue::addTimerInLoop,this,timer));
+    loop_->queueInLoop(std::bind(&TimerQueue::addTimerInLoop,shared_from_this(),timer));
 }
-void TimerQueue::addTimerInLoop(Timer*timer)
+void TimerQueue::addTimerInLoop(std::shared_ptr<Timer> timer)
 {
     Timestamp when(timer->expiration());
-    std::pair<Timestamp,Timer*> entry(when,timer);
+    std::pair<Timestamp,std::shared_ptr<Timer>> entry(when,timer);
     timers_.insert(entry);
     //if(when==timers_.begin()->first) resetTimerfd(timer_fd,when);
 }
 void TimerQueue::deleteTimer(Timestamp&t)
 {
     if(timers_.count(t)){
-        Timer*timer=timers_[t];
-        delete timer;
-        LOG_DEBUG("Timer Deleted!");
         timers_.erase(t);
     }
 }
