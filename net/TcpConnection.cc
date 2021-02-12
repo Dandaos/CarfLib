@@ -76,10 +76,19 @@ void TcpConnection::handleWrite()
         while(1){
             int n=write(channel_->getFd(),writeBuffer.beginRead(),writeBuffer.readableBytes());
             if(n==-1){
-                if(errno==EAGAIN) channel_->enableWriting();
+                if(errno==EAGAIN){
+                    channel_->enableWriting();
+                    break;
+                }
             }
             bytes_to_send-=n;
-            if(bytes_to_send==0) break;
+            writeBuffer.addReadIndex(n);
+            if(bytes_to_send==0) {
+                break;
+            }
+            else{
+                channel_->enableWriting();
+            }
         }
     }
 }
