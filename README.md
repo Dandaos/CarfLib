@@ -19,8 +19,8 @@ Web服务器的实现借鉴了@qinguoyi的TinyWebServer（ https://github.com/qi
 
 1. LT模式
 
-   ![image](https://github.com/Dandaos/WebServer/tree/master/picture/LT.png)
+   ![image](picture/LT.png)
 
 2. ET模式
 
-   ![image](https://github.com/Dandaos/WebServer/tree/master/picture/ET.png)
+   ![image](picture/ET.png)
