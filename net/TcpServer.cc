@@ -72,7 +72,7 @@ void TcpServer::newConnection()
         EventLoop *loop=pool->getNextLoop();
         assert(loop!=NULL);
         std::shared_ptr<Timer> timer;
-        if(conn_hold_seconds>0){
+        if(conn_hold_seconds>=0){
             Timestamp when(Timestamp::now());
             when.addTime(conn_hold_seconds*1000*1000);
             timer.reset(new Timer(when,conn_hold_seconds*1000*1000));
@@ -86,8 +86,9 @@ void TcpServer::newConnection()
         loop->queueInLoop(std::bind(&TcpConnection::connectEstablished,conn));
         //一定要等TcpConnction构造成功才enableReading，否则很容易抛出std::weak_ptr错误
         //如果在此线程enableReading，可能会在loop对应Epoll处发生竞态
-        if(conn_hold_seconds>0){
-            timer->setTimerFunc(std::bind(&TcpConnection::handleTimer,conn,_1));
+        if(conn_hold_seconds>=0){
+            timer->bindTcpConnection(conn);
+            timer->setTimerFunc(std::bind(&TcpConnection::handleTimer,conn.get(),_1));
             timer_queue->addTimer(timer);
         }
     }

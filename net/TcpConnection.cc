@@ -25,9 +25,9 @@ TcpConnection::TcpConnection(EventLoop*loop,int fd,int mode,std::string &peernam
 }
 TcpConnection::~TcpConnection()
 {
-    // 2020/10/16：修改前为close(channel_->getFd()),但此时channel_已经被析构了,程序会突然退出
     LOG_INFO("TcpConnection[%d] destroyed!",fd_);
     close(fd_);
+    delete channel_;
 }
 void TcpConnection::handleRead()
 {
@@ -67,8 +67,8 @@ void TcpConnection::handleWrite()
             writeBuffer.addReadIndex(n);
         }
         else{
-            LOG_ERROR("TcpConnection::handleWrite Error!");
-            channel_->disableWriting();
+            LOG_ERROR("TcpConnection::handleWrite Error[%s]!",strerror(errno));
+            //channel_->disableWriting();
         }
     }
     else{
@@ -95,13 +95,12 @@ void TcpConnection::handleWrite()
 // 
 void TcpConnection::handleClose()
 {
-    EventLoop*loop=channel_->getLoop();
+    //EventLoop*loop=channel_->getLoop();
     channel_->disableAll();
     TcpConnectionPtr guardThis(shared_from_this());
     closeCallback_(guardThis);      //回调將TcpServer中的TcpConnection异步删除
     //loop->queueInLoop(std::bind(&TcpConnection::connDestroyed,guardThis));
     state_=kdisconnected;
-    delete channel_;
 }
 void TcpConnection::stopTimer()
 {
@@ -125,7 +124,7 @@ void TcpConnection::send(const char*s,int len)
             remaining=len-nwrote;
         }
         else{
-            LOG_ERROR("TcpConnection::send() Error!");
+            LOG_ERROR("TcpConnection::send() Error[%d]!",strerror(errno));
             nwrote=0;
         }
     }
@@ -147,9 +146,9 @@ void TcpConnection::handleTimer(std::shared_ptr<TimerQueue> timerqueue)
 {
     Timestamp now(Timestamp::now());
     double remain=now.microSecondsSinceEpoch()-visited.microSecondsSinceEpoch();
-    //在interval时间内被再次访问
     if(timer_.use_count()>0){
-        if(remain<timer_->getInterval()){
+        //在规定期限内再次访问或者写缓冲依旧有数据未发送时，更新定时器
+        if(remain<timer_->getInterval()||writeBuffer.readableBytes()>0){
             Timestamp t=visited;
             t.addTime(timer_->getInterval());
             timer_->restart(t);

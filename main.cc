@@ -5,7 +5,7 @@
 int main()
 {
     EventLoop loop;
-    HttpServer server_(&loop,"",8000,5,1,-1,10);
+    HttpServer server_(&loop,"",8000,5,1,10,3);
     Logger::setLogLevel(Logger::ERROR);
     LogFile *log_=new LogFile("",true,200*1024*1024);
     Logger::setOuputFunc(std::bind(&LogFile::append_file,log_,_1,_2));

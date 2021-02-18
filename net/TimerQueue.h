@@ -10,6 +10,7 @@
 class EventLoop;
 class Channel;
 class TimerQueue;
+class TcpConnection;
 class Timer
 {
     public:
@@ -25,7 +26,10 @@ class Timer
         }
         inline bool isVisited() const{return visited;}
         inline Timestamp expiration()const{return expired;}
-        void run(std::shared_ptr<TimerQueue> timerqueue){callback_(timerqueue);}
+        void run(std::shared_ptr<TimerQueue> timerqueue){
+            std::shared_ptr<TcpConnection> tcp(tcpConn_.lock());
+            if(tcp) callback_(timerqueue);
+        }
         void setTimerFunc(TimerCallback cb){callback_=std::move(cb);}
         void restart(Timestamp expired_)
         {
@@ -33,11 +37,13 @@ class Timer
         }
         void setVisited(bool visited_){visited=visited_;}
         double getInterval()const{return interval_;}
+        void bindTcpConnection(std::shared_ptr<TcpConnection> tcpConn){tcpConn_=tcpConn;}
     private:
         double interval_;
         bool visited;
         Timestamp expired;
         TimerCallback callback_;
+        std::weak_ptr<TcpConnection> tcpConn_;
 
 };
 typedef std::map<Timestamp,std::shared_ptr<Timer>> BackupList;
