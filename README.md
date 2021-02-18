@@ -12,6 +12,7 @@ Web服务器的实现借鉴了@qinguoyi的![TinyWebServer](https://github.com/qi
 - 定时器定时提掉空闲连接
 - 数据库连接池
 - 使用智能指针管理对象
+- 使用eventfd唤醒线程
 
 ## 测试结果
 
