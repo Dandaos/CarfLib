@@ -24,7 +24,7 @@ Timer主要用于存储TcpConnection对象的存活时间，以及到期时相�
 
 TimerQueue中使用成员变量timers_ `(std::map<Timestamp,std::shared_ptr<Timer>>)`存储所有连接的timer，主线程定时检查timers_ ，所有小于当前时间的timer会调用相应的回调函数(`TcpConnection::handleTimer`)并从 timers_ 移除。
 
-在`TcpConnection::handleTimer`中，若`(当前时间-上一次访问的时间)>=存活时间`且此时`写缓冲中没有数据`，则服务器会主动调用`TcpConnection::shutdownWrite`关闭写端。若`(当前时间-上一次访问的时间)<存活时间`或者`此时写缓冲有数据`，则timer则会更新新的到期时间并將timer重新加入到timer_中。
+在`TcpConnection::handleTimer`中，若`(当前时间-上一次访问的时间)>=存活时间`且此时`TcpConnection并没有正在读写`，则服务器会主动调用`TcpConnection::shutdownWrite`关闭写端。若`(当前时间-上一次访问的时间)<存活时间`或者`TcpConnection此时正在读或者正在写`，则timer则会更新新的到期时间并將timer重新加入到timer_中。
 
 #### (3) Timer与TcpConnection
 Timer在到期时会最终执行`TcpConnection::handleTimer`，在此之前TcpConnection不能被析构，通过在绑定回调函数时使用`shared_ptr<TcpConnection>`替代原生指针可以避免这个问题。但这样带来的另外一个问题是TcpConnetion只能在Timer对象被销毁之后才能销毁，举个例子，若客户端在到期时间前就主动关闭连接了，TcpConnection此时应该及时析构以释放系统资源，但由于Timer的存在(因为其保存有`shared_ptr<TcpConnection>`的副本)而將该过程延后了。
