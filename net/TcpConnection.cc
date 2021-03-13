@@ -86,9 +86,6 @@ void TcpConnection::handleWrite()
             if(bytes_to_send==0) {
                 break;
             }
-            else{
-                channel_->enableWriting();
-            }
         }
     }
 }
